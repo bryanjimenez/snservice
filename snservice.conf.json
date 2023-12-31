@@ -1,0 +1,33 @@
+{
+  "uiOrigin": "https://bryanjimenez.github.io",
+
+  "port": {
+    "ui": 8080,
+    "http": 8000,
+    "https": 8443
+  },
+
+  "ca": {
+    "endEntityKey": "eekey.pem",
+    "endEntityCrt": "ee.pem",
+    "rootKey": "rootKey.pem",
+    "rootCrt": "root.pem"
+  },
+
+  "directory": {
+    "ca": "/data/selfSignedCA",
+    "pushAPI": "/data/pushAPI",
+    "csv": "/data/csv",
+    "json": "/data/json",
+    "audio": "/data/audio"
+  },
+
+  "servicePath": {
+    "audio": "/g_translate_pronounce",
+    "data": "/lambda",
+    "sheet": "/workbook",
+    "pushGetPubKey": "/getPushPublicKey",
+    "pushRegister": "/registerClient",
+    "pushSheetData": "/pushSheetData"
+  }
+}
