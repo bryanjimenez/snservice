@@ -117,7 +117,11 @@ export default [
     ignores: [".*", "node_modules/", "dist/"],
   },
   {
-    files: ["index.ts", "src/**/*.ts", "utils/**/*.ts"],
+    files: [
+      "index.{ts,cts,mts}",
+      "src/**/*.{ts,cts,mts}",
+      "utils/**/*.{ts,cts,mts}",
+    ],
     languageOptions: {
       parser: tsParser,
       parserOptions: {

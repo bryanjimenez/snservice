@@ -189,13 +189,6 @@ function get() {
   });
 }
 
-if (
-  // ts-node
-  import.meta.url === `file://${process.argv[1]}`
-) {
-  // running from cli
-  void create();
-}
 
 export const ca = {
   /** If it has been previously created */

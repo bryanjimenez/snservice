@@ -1,12 +1,31 @@
 import startService from "./src/index.js";
+import { yellow } from "./utils/consoleColor.js";
+import { lan } from "./utils/environment-host.js";
+import { ca } from "./utils/environment-signed-ca.js";
 
 if (
-  // ts-node
   import.meta.url === `file://${process.argv[1]}` ||
-  // node
-  (import.meta.url === `file://${process.argv[1]}/dist/index.js`)
-
+  import.meta.url === `file://${process.argv[1]}/dist/esm/index.js`
 ) {
   // running from cli
-  void startService();
+
+  if (process.argv[2] === "--ca") {
+    void ca
+      .get()
+      .catch(() => {
+        console.log(yellow("\nCreating Certificate Authority"));
+        return ca.create();
+      })
+      .then(() => {
+        console.log("CA already exists");
+      });
+  }
+
+  if (process.argv[2] === "--host") {
+    console.log(JSON.stringify(lan));
+  }
+
+  if (process.argv[2] === undefined) {
+    void startService();
+  }
 }

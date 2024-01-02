@@ -32,10 +32,3 @@ switch (true) {
 
 export const lan = { address: ip?.address, hostname: prettyHostname };
 
-if (
-  // ts-node
-  import.meta.url === `file://${process.argv[1]}`
-) {
-  // running from cli
-  console.log(JSON.stringify(lan));
-}

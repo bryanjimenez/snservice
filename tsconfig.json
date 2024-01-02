@@ -2,10 +2,10 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "dist/",
-    "declaration": true,
+    // "declaration": true,
     // "declarationDir": "dist/@types",
 
-    "typeRoots": ["node_modules/@types", "external"],
+    // "typeRoots": ["node_modules/@types", "external"],
 
     "strict": true,
     "skipLibCheck": true,
@@ -23,16 +23,7 @@
 
     "removeComments": true
   },
-  "include": [
-    "index.ts",
-    "./src",
-    "utils/index.ts",
-    "utils/environment-host.ts",
-    "utils/environment-signed-ca.ts",
-    "utils/consoleColor.ts",
-    "external/nmemonica.d.ts",
-    "external/xspreadsheet.d.ts"
-  ],
+  "include": ["index.ts", "index.cts", "./src", "./utils", "./external"],
 
   "ts-node": {
     // For mocha -r ts-node/register

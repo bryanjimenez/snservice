@@ -4,7 +4,16 @@
   "version": "1.0.0",
   "description": "Data sync service",
   "type": "module",
-  "main": "dist/index.js",
+  "main": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    "./*": {
+      "types": "./dist/types/*.d.ts",
+      "import": "./dist/esm/*.js",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.js"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -12,7 +21,8 @@
     "test": "mocha -r ts-node/register ./test/unit/**/*.ts",
     "type": "tsc -b --verbose",
     "coverage": "nyc npm run test > '/dev/null'; nyc report",
-    "build": "tsc -b",
+    "build": "tsc -b ./tsconfig.types.json ./tsconfig.cjs.json ./tsconfig.esm.json",
+    "postbuild": "echo '{ \"type\" : \"commonjs\" }' > ./dist/cjs/package.json",
     "start": "node ./dist/index.js ",
     "staged": "git diff --staged --diff-filter=d --name-only",
     "lint": "npm run -s staged | xargs eslint --fix",
