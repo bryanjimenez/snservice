@@ -1,7 +1,6 @@
 import express from "express";
 import http from "http";
 import https from "https";
-import fs from "fs";
 import path from "path";
 import { getData } from "./data.js";
 import { getWorkbook, putWorkbookAsync } from "./workbook.js";
@@ -13,21 +12,13 @@ import { requestUserPermission } from "./helper/userPermission.js";
 import { checkAllOrigin, custom404, customError } from "./helper/utils.js";
 import { getCA } from "./appUi.js";
 import { blue, red, yellow } from "../utils/consoleColor.js";
+import { config } from "../utils/config.js";
 
 const projectRoot = path.resolve();
 
-const configPath = "/snservice.conf.json";
-if (!fs.existsSync(projectRoot + configPath)) {
-  console.log(projectRoot);
-  throw new Error("Missing config file " + projectRoot);
-}
-export const config = JSON.parse(
-  fs.readFileSync(projectRoot + configPath, { encoding: "utf-8" })
-) as ServiceConfiguration;
-
 const uiPort = config.port.ui;
-const httpPort = Number(config.port.http);
-export const httpsPort = Number(config.port.https);
+const httpPort = config.port.http;
+export const httpsPort = config.port.https;
 const audioPath = config.servicePath.audio;
 export const dataPath = config.servicePath.data;
 const sheetPath = config.servicePath.sheet;
@@ -40,25 +31,13 @@ export const CSV_DIR = path.normalize(`${projectRoot}${config.directory.csv}`);
 export const JSON_DIR = path.normalize(
   `${projectRoot}${config.directory.json}`
 );
-export const AUDIO_DIR = path.normalize(`${projectRoot}${config.directory.audio}`)
+export const AUDIO_DIR = path.normalize(
+  `${projectRoot}${config.directory.audio}`
+);
 export const CA_DIR = `${projectRoot}${config.directory.ca}`;
 export const subscriptionFile = path.normalize(
   `${JSON_DIR}/subscriptions.json`
 );
-
-if (
-  !(
-    (uiPort && httpsPort && audioPath && dataPath && sheetPath)
-    // pathPushGetPubKey &&
-    // pathPushRegister &&
-    // pushSheetData
-  )
-) {
-  throw new Error("Invalid property in config file");
-}
-if (CA_DIR === undefined) {
-  throw new Error("Missing CA directory path");
-}
 
 if (!lan.address) {
   throw new Error("Could not get host IP");
@@ -125,7 +104,8 @@ export default async function askPermissions() {
     console.log(red("http://") + localhost + red(":" + httpPort) + "\n\n");
   });
 
-  void ca.get()
+  void ca
+    .get()
     .catch(() => {
       console.log(yellow("\nCreating Certificate Authority"));
       return ca.create();

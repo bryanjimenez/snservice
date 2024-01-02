@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import path from "path";
 import fs from "fs";
-import { config } from "./index.js";
+import { config } from "../utils/config.js";
 
 const projectRoot = path.resolve();
 

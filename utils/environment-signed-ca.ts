@@ -2,16 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { lan } from "./environment-host.js";
+import { config } from "./config.js";
 
 const projectRoot = path.resolve();
-
-const configPath = "/snservice.conf.json";
-if (!fs.existsSync(projectRoot + configPath)) {
-  throw new Error("Missing config file " + projectRoot);
-}
-const config = JSON.parse(
-  fs.readFileSync(projectRoot + configPath, { encoding: "utf-8" })
-) as ServiceConfiguration;
 
 const hasSelfSignedCertificateAuthority = () => {
   if (
