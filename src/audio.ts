@@ -8,7 +8,7 @@ import md5 from "md5";
 import { AUDIO_DIR } from "./index.js";
 
 const allowedTL = ["en", "ja"];
-const audioExt = '.mp3'
+const audioExt = ".mp3";
 
 /**
  * Fetch audio pronunciation
@@ -33,9 +33,14 @@ export async function getAudioAsync(
       return;
     }
 
-    if (fs.existsSync(AUDIO_DIR + "/" + md5(q) + audioExt)) {
+    if (
+      req.header("X-No-Cache") === undefined &&
+      fs.existsSync(AUDIO_DIR + "/" + md5(q) + audioExt)
+    ) {
       console.log("from file cache");
-      const fileStream = fs.createReadStream(AUDIO_DIR + "/" + md5(q) + audioExt);
+      const fileStream = fs.createReadStream(
+        AUDIO_DIR + "/" + md5(q) + audioExt
+      );
 
       fileStream.pipe(res);
       return;
@@ -69,7 +74,7 @@ export async function getAudioAsync(
     // Write to fs ?
     const filename = path.normalize(AUDIO_DIR + "/" + md5(q) + audioExt);
     const fileStream = fs.createWriteStream(filename, {
-    flags: "w",
+      flags: "w",
     });
 
     // https://www.freecodecamp.org/news/node-js-streams-everything-you-need-to-know-c9141306be93/
@@ -83,8 +88,6 @@ export async function getAudioAsync(
     readStream.pipe(fileStream);
     readStream.pipe(res);
   } catch (e) {
-    console.log("getAudio");
-    console.log(e);
     next(e);
     res.sendStatus(500);
   }
