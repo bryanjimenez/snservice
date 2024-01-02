@@ -9,7 +9,7 @@ import { lan } from "../utils/host.js";
 import { ca } from "../utils/signed-ca.js";
 import { requestUserPermission } from "./helper/userPermission.js";
 // import { getPublicKey, pushSheetDataAsync, registerClient } from "./push.js";
-import { checkAllOrigin, custom404, customError } from "./helper/utils.js";
+import { checkAllOrigin, custom404, customError } from "./helper/utilHandlers.js";
 import { getCA } from "./appUi.js";
 import { blue, red, yellow } from "../utils/consoleColor.js";
 import { config } from "../utils/config.js";
