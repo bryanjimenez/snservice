@@ -8,7 +8,7 @@ void import("./src/index.js").then(({ default: startService }) => {
     // running from cli
 
     if (process.argv[2] === "--ca") {
-      void import("./utils/environment-signed-ca.js").then(({ ca }) => {
+      void import("./utils/signed-ca.js").then(({ ca }) => {
         void import("./utils/consoleColor").then(({ yellow }) => {
           // running from cli
           void ca
@@ -27,7 +27,7 @@ void import("./src/index.js").then(({ default: startService }) => {
     }
 
     if (process.argv[2] === "--host") {
-      void import("./utils/environment-host.js").then(({ lan }) => {
+      void import("./utils/host.js").then(({ lan }) => {
         console.log(JSON.stringify(lan));
       });
       

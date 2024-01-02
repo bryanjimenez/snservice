@@ -1,7 +1,7 @@
 import startService from "./src/index.js";
 import { yellow } from "./utils/consoleColor.js";
-import { lan } from "./utils/environment-host.js";
-import { ca } from "./utils/environment-signed-ca.js";
+import { lan } from "./utils/host.js";
+import { ca } from "./utils/signed-ca.js";
 
 if (
   import.meta.url === `file://${process.argv[1]}` ||

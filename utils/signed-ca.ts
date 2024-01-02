@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
-import { lan } from "./environment-host.js";
+import { lan } from "./host.js";
 import { config } from "./config.js";
 
 const projectRoot = path.resolve();
