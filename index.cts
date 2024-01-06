@@ -1,4 +1,10 @@
-void import("./src/index.js").then(({ default: startService }) => {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const JsonObject = require("swagger-ui-express").JsonObject;
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const fs = require("fs");
+
+void import("./src/app.js").then(({ default: startService }) => {
   if (
     (require.main?.loaded === true &&
       require.main.filename === `${process.argv[1]}/dist/cjs/index.cjs`) ||
@@ -30,10 +36,29 @@ void import("./src/index.js").then(({ default: startService }) => {
       void import("./utils/host.js").then(({ lan }) => {
         console.log(JSON.stringify(lan));
       });
-      
+
       return;
     }
 
-    void startService();
+    let swaggerSpec: typeof JsonObject;
+    let pkgRoot;
+    switch (true) {
+      case process.argv[1].endsWith("/dist/cjs/index.js"):
+        pkgRoot = process.argv[1].replace("/dist/cjs/index.js", "");
+        break;
+      case process.argv[1].endsWith("@nmemonica/snservice"):
+        pkgRoot = process.argv[1];
+        break;
+      default:
+        throw new Error("Unexpected cwd");
+    }
+
+    swaggerSpec = JSON.parse(
+      fs.readFileSync(pkgRoot + "/api-docs/swaggerSpec.json", {
+        encoding: "utf-8",
+      })
+    );
+
+    void startService({ swaggerSpec });
   }
 });

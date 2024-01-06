@@ -1,18 +1,23 @@
 import express from "express";
-import http from "http";
-import https from "https";
-import path from "path";
-import { getData } from "./data.js";
-import { getWorkbook, putWorkbookAsync } from "./workbook.js";
-import { getAudioAsync } from "./audio.js";
+import http from "node:http";
+import https from "node:https";
+import path from "node:path";
+import { getData } from "./routes/data.js";
+import { getWorkbook, putWorkbookAsync } from "./routes/workbook.js";
+import { getAudioAsync } from "./routes/audio.js";
 import { lan } from "../utils/host.js";
 import { ca } from "../utils/signed-ca.js";
 import { requestUserPermission } from "./helper/userPermission.js";
 // import { getPublicKey, pushSheetDataAsync, registerClient } from "./push.js";
-import { checkAllOrigin, custom404, customError } from "./helper/utilHandlers.js";
-import { getCA } from "./appUi.js";
-import { blue, red, yellow } from "../utils/consoleColor.js";
+import {
+  checkAllOrigin,
+  custom404,
+  customError,
+} from "./helper/utilHandlers.js";
+import { getCA } from "./routes/certificate.js";
+import { blue, green, red, yellow } from "../utils/consoleColor.js";
 import { config } from "../utils/config.js";
+import swaggerUI from "swagger-ui-express";
 
 const projectRoot = path.resolve();
 
@@ -51,10 +56,18 @@ export const allowedOrigins = [
   `https://127.0.0.1:${uiPort}`,
   `https://${serviceIP}:${uiPort}`,
   `https://${lan.hostname}:${uiPort}`,
+  `https://${serviceIP}:${httpsPort}`,
+  `https://${lan.hostname}:${httpsPort}`,
   productionOrigin,
 ];
 
-export default async function askPermissions() {
+interface ServiceOptions {
+  swaggerSpec?: swaggerUI.JsonObject;
+}
+
+export default async function askPermissions(serviceOptions?: ServiceOptions) {
+  const { swaggerSpec } = serviceOptions ?? {};
+
   await requestUserPermission(
     ca.exists(),
     serviceIP,
@@ -68,6 +81,34 @@ export default async function askPermissions() {
   );
 
   const app = express();
+
+  if (swaggerSpec) {
+    console.log(
+      `\n${green(
+        "Swagger"
+      )} api docs: https://${serviceIP}:${httpsPort}/api-docs`
+    );
+    swaggerSpec.servers = [
+      {
+        url: `https://${serviceIP}:{port}`,
+        description: "https",
+        variables: {
+          port: {
+            enum: [httpsPort, httpPort],
+            default: httpsPort,
+          },
+        },
+      },
+    ];
+    app.use(
+      "/api-docs",
+      swaggerUI.serve,
+      swaggerUI.setup(swaggerSpec, {
+        // prevent 'try it out' on anything but GET
+        swaggerOptions: { supportedSubmitMethods: ["get"] },
+      })
+    );
+  }
 
   app.disable("x-powered-by");
   app.use(express.json()); // for parsing application/json
@@ -101,7 +142,7 @@ export default async function askPermissions() {
   httpSever.listen(httpPort, localhost, 0, () => {
     console.log("\n");
     console.log("workbook http service");
-    console.log(red("http://") + localhost + red(":" + httpPort) + "\n\n");
+    console.log(red("http://") + localhost + red(":" + httpPort));
   });
 
   void ca
@@ -120,9 +161,8 @@ export default async function askPermissions() {
       httpsServer.listen(httpsPort, serviceIP, 0, () => {
         console.log("\n");
         console.log("workbook https service");
-        console.log(
-          blue("https://") + serviceIP + blue(":" + httpsPort) + "\n\n"
-        );
+        console.log(blue("https://") + serviceIP + blue(":" + httpsPort));
       });
+      // console.log("\n\n")
     });
 }

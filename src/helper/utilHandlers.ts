@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { allowedOrigins } from "../index.js";
+import { allowedOrigins } from "../app.js";
 
 /**
  * Check origin from all request middleware

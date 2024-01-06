@@ -1,17 +1,69 @@
 import type { Request, Response, NextFunction } from "express";
 import { type SheetData } from "@nmemonica/x-spreadsheet";
 
-import { sheetDataToJSON } from "./helper/jsonHelper.js";
-import { multipart } from "./helper/multipart.js";
+import { sheetDataToJSON } from "../helper/jsonHelper.js";
+import { multipart } from "../helper/multipart.js";
 import fs, { createWriteStream, createReadStream } from "node:fs";
 import path from "node:path";
-import { JSON_DIR } from "./index.js";
-import { isFilledSheetData } from "./helper/sheetHelper.js";
+import { JSON_DIR } from "../app.js";
+import { isFilledSheetData } from "../helper/sheetHelper.js";
 
 const allowedResources = ["cache", "phrases", "vocabulary", "kanji"];
 
 /**
- * Get JSON vocabulary data
+ * @swagger
+ * components:
+ *  schemas:
+ *    Vocabulary:
+ *      type: object
+ *      properties:
+ *        japanese:
+ *          type: string
+ *          description: Japanese definition
+ *          example: にんげん\n人間
+ *        english:
+ *          type: string
+ *          description: English definition
+ *          example: human
+ *        romaji:
+ *          type: string
+ *          description: romaji pronunciation
+ *          example: ningen
+ *        grp:
+ *          type: string
+ *          description: main group
+ *          example: Noun
+ *        subGrp:
+ *          type: string
+ *          description: sub group
+ *          example: People
+ */
+
+/**
+ * @swagger
+ * /lambda/{data}.json:
+ *    get:
+ *      description: get dataset description here
+ *      parameters:
+ *      - in: path
+ *        name: data
+ *        required: true
+ *        description: dataset resource requested
+ *        schema:
+ *          type: string
+ *        example:
+ *          vocabulary
+ *      responses:
+ *        200:
+ *          description: Vocabulary.json
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  6f48c35203f9078a46baf913e5b8824e:
+ *                    type: object
+ *                    $ref: '#/components/schemas/Vocabulary'
  */
 export function getData(req: Request, res: Response) {
   const { data } = req.params;

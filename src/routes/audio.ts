@@ -5,13 +5,39 @@ import stream from "node:stream";
 import fs from "node:fs";
 import path from "node:path";
 import md5 from "md5";
-import { AUDIO_DIR } from "./index.js";
+import { AUDIO_DIR } from "../app.js";
 
 const allowedTL = ["en", "ja"];
 const audioExt = ".mp3";
 
 /**
- * Fetch audio pronunciation
+ * @swagger
+ * /audio:
+ *    get:
+ *      description: gets audio pronunciation for a word in a language
+ *      parameters:
+ *      - in: query
+ *        name: tl
+ *        required: true
+ *        description: target language
+ *        schema:
+ *          type: string
+ *        example: en
+ *      - in: query
+ *        name: q
+ *        required: true
+ *        description: query
+ *        schema:
+ *          type: string
+ *        example: word
+ *      responses:
+ *        200:
+ *          description: an audio of the query in the target language
+ *          content:
+ *            audio/mpeg:
+ *              schema:
+ *                type: file
+ *                format: binary
  */
 export async function getAudioAsync(
   req: Request,
