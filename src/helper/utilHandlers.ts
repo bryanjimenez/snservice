@@ -3,21 +3,23 @@ import { allowedOrigins } from "../app.js";
 
 /**
  * Check origin from all request middleware
- * @param usingSelfSignedCA
  */
-export function checkAllOrigin(usingSelfSignedCA: boolean) {
+export function checkAllOrigin() {
   return function (req: Request, res: Response, next: NextFunction) {
     console.log(
       (req.secure ? "https" : "http") + " " + req.method + " " + req.url
     );
 
-    if (!req.secure && !usingSelfSignedCA) {
+    if (!req.secure) {
       res.set("Access-Control-Allow-Origin", req.headers.origin);
-      res.set("Access-Control-Allow-Methods", "GET, PUT");
-      res.set(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Data-Version, X-No-Cache"
-      );
+      res.set("Access-Control-Allow-Methods", "GET");
+      res.set("Access-Control-Allow-Headers", "Content-Type");
+
+      if (req.method !== "GET" || req.url !== "/getCA") {
+        res.sendStatus(401);
+        console.log("Unathorized");
+        return;
+      }
     }
 
     if (req.secure) {

@@ -115,7 +115,7 @@ export default async function askPermissions(serviceOptions?: ServiceOptions) {
   // app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
   // check origin from all requests
-  app.use(checkAllOrigin(ca.exists()));
+  app.use(checkAllOrigin());
 
   // app.get("/", getUi)
   // app.get("/:resource.:ext", getAsset)
