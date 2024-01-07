@@ -2,36 +2,65 @@
 
 Service for testing and developing the UI locally.
 
+## Datasets
+
+User datasets (Phrases.csv, Vocabulary.csv, Kanji.csv) are kept in data/csv directory.
+
+User can import these datasets using the **External Data Source** section in the Nmemonica App Settings.
+
 ## Note:
 
 Nmemonica is a PWA and uses the Service Worker API [(MDN docs)](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API) which is only enabled over HTTPS.
 
-To run this service over HTTPS self signed CA must be used.
+To run this service over HTTPS a self signed CA must be installed on the client device. (service generates keys under the data/selfSignedCA directory)
+
+## Install Self Signed CA
+
+### Chrome Desktop
+
+1 **Navigate** to chrome:settings/certificates  
+2 **Authorities** tab  
+3 **Import** (data/selfSignedCA/root.pem)
+
+### Chrome Mobile
+
+1 **Navigate** to http://YOUR_SERVICE_IP:HTTP_PORT/getCA (Downloads root.pem)  
+2 **Install** root.pem from browser
 
 ## Configuration
 
-Edit snservice.config.js as needed
+Edit [snservice.conf.json](snservice.conf.json) as needed
 
-## Generate self signed CA
+## Prerequisites
+
+- A server (Device running this service)
+  - [Git](https://git-scm.com/)
+  - [Node](https://nodejs.org)
+- A client (Device with browser viewing Nmemonica)
+
+## Install and start
 
 ```bash
- npx ts-node ./utils/environment-signed-ca.ts
-```
-
-## Build and start
-
-```bash
-# to build the service
+# clone repo
+git clone https://github.com/bryanjimenez/snservice.git
+cd snservice
+# install dependencies
+npm install
+# build service
 npm run build
-# to start the service
-npm run start
+# run service
+node ./dist/esm/index.js
 ```
 
-## Service endpoints
+## api-docs
+API is documented using  
+- [SwaggerUI](https://swagger.io/docs/specification/basic-structure/)  
+- [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md)  
 
-- /DATA_PATH/:data.json ex: localhost:8000/lambda/vocabulary.json
-- /AUDIO_PATH/ ex: localhost:8000/g_translate_pronounce?tl=ja&q=友達
-- /SHEET_PATH/ ex: localhost:8000/workbook/getData
+If your ip is 192.168.1.10 and https port 8443 then run the service and navigate to
+
+https://192.168.1.10:8443/api-docs
+
 
 ## CSV
 

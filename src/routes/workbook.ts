@@ -2,19 +2,63 @@ import type { Request, Response, NextFunction } from "express";
 import fs from "node:fs";
 import path from "node:path";
 import readline from "node:readline";
-import { csvToObject, objectToCSV } from "./helper/csvHelper.js";
-import { multipart } from "./helper/multipart.js";
-import { CSV_DIR } from "./index.js";
+import { csvToObject, objectToCSV } from "../helper/csvHelper.js";
+import { multipart } from "../helper/multipart.js";
+import { CSV_DIR } from "../app.js";
 import { type SheetData } from "@nmemonica/x-spreadsheet";
 import { updateDataAndCache } from "./data.js";
-import { FilledSheetData, isFilledSheetData } from "./helper/sheetHelper.js";
-import { sheetDataToJSON } from "./helper/jsonHelper.js";
+import { FilledSheetData, isFilledSheetData } from "../helper/sheetHelper.js";
+import { sheetDataToJSON } from "../helper/jsonHelper.js";
+
+/**
+ * @swagger
+ * components:
+ *  schemas:
+ *    xspreadsheet:
+ *      type: object
+ *      properties:
+ *        name:
+ *          type: string
+ *          description: name of sheet
+ *          examples:
+ *            Phrases
+ *            Vocabulary
+ *            Kanji
+ *        cols:
+ *          description: column properties
+ *          type: object
+ *        rows:
+ *          description: row and cell data
+ *          type: object
+ *        merges:
+ *          type: object
+ *        styles:
+ *          description: cell style information
+ *          type: object
+ *        freeze:
+ *          type: object
+ */
 
 const _XLSX_FILE = "Nmemonica.xlsx";
 
 const fileType: string = ".csv"; //".xlsx";
 const sheetNames = ["Phrases", "Vocabulary", "Kanji"];
 
+/**
+ * @swagger
+ * /workbook:
+ *    get:
+ *      description: get workbook object
+ *      responses:
+ *        200:
+ *          description: an xspreadsheet object
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/xspreadsheet'
+ */
 export function getWorkbook(req: Request, res: Response, next: NextFunction) {
   let xObj: Promise<FilledSheetData>[];
   switch (fileType) {
@@ -44,6 +88,26 @@ export function getWorkbook(req: Request, res: Response, next: NextFunction) {
     .catch(next);
 }
 
+/**
+ * @swagger
+ * /workbook:
+ *    put:
+ *      description: save a workbook object multipart object ...
+ *      requestBody:
+ *        content:
+ *          multipart/form-data:
+ *            schema:
+ *              $ref: '#/components/schemas/xspreadsheet'
+ *      responses:
+ *        200:
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  hash:
+ *                    type: string
+ */
 export async function putWorkbookAsync(
   req: Request,
   res: Response,
